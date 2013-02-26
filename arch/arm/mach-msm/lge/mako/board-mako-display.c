@@ -671,7 +671,7 @@ static int hdmi_core_power(int on, int show)
 			pr_err("disable reg_8921_l23 failed, rc=%d\n", rc);
 			return -ENODEV;
 		}
-		pr_debug("%s(off): success\n", __func__);
+		pr_info("%s(off): success\n", __func__);
 	}
 
 	prev_on = on;
@@ -686,6 +686,8 @@ static int hdmi_gpio_config(int on)
 {
 	int rc = 0;
 	static int prev_on;
+
+	pr_err("hdmi_gpio_config: enter with on=%d\n", on);
 
 	if (on == prev_on)
 		return 0;
@@ -709,7 +711,7 @@ static int hdmi_gpio_config(int on)
 				"HDMI_HPD", HDMI_HPD_GPIO, rc);
 			goto error3;
 		}
-		pr_debug("%s(on): success\n", __func__);
+		pr_info("%s(on): success\n", __func__);
 
 	} else {
 		gpio_free(HDMI_DDC_CLK_GPIO);
