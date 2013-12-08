@@ -97,6 +97,7 @@ struct touch_platform_data
 
 struct t_data
 {
+	u16     state;
 	u16	id;
 	u16	x_position;
 	u16	y_position;
@@ -220,6 +221,38 @@ struct accuracy_filter_info {
 	int	time_to_max_pressure;
 	u16	finish_filter;
 	struct accuracy_history_data	his_data;
+};
+
+struct lge_touch_data {
+        void*                           h_touch;
+        atomic_t                        next_work;
+        atomic_t                        device_init;
+        u8                              work_sync_err_cnt;
+        u8                              ic_init_err_cnt;
+        u8                              charger_type;
+        volatile int                    curr_pwr_state;
+        int                             curr_resume_state;
+        struct i2c_client               *client;
+        struct input_dev                *input_dev;
+        struct hrtimer                  timer;
+        struct work_struct              work;
+        struct delayed_work             work_init;
+        struct delayed_work             work_touch_lock;
+        struct work_struct              work_fw_upgrade;
+        struct early_suspend            early_suspend;
+        struct touch_platform_data      *pdata;
+        struct touch_data               ts_data;
+        struct touch_fw_info            fw_info;
+        struct fw_upgrade_info          fw_upgrade;
+        struct section_info             st_info;
+        struct kobject                  lge_touch_kobj;
+        struct ghost_finger_ctrl        gf_ctrl;
+        struct jitter_filter_info       jitter_filter;
+        struct accuracy_filter_info     accuracy_filter;
+#ifdef CONFIG_TOUCHSCREEN_CHARGER_NOTIFY
+        struct power_supply             touch_psy;
+        struct work_struct              work_charger;
+#endif
 };
 
 struct touch_device_driver {
