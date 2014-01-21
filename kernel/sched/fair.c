@@ -2751,7 +2751,7 @@ static int select_idle_sibling(struct task_struct *p, int target)
 			for_each_cpu(i, sched_group_cpus(sg)) {
 				if (i == target || !idle_cpu(i))
 					goto next;
-				if (weighted_cpuload(i) > p->se.avg.load_avg_contrib)
+				if (weighted_cpuload(i) > p->se.load.weight)
 					goto next;
 			}
 
