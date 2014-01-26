@@ -157,24 +157,6 @@ void sched_init_granularity(void)
 	update_sysctl();
 }
 
-/* Save per_cpu information that will be shared with other frameworks */
-DEFINE_PER_CPU(struct sched_pm, sched_stat) = {
-	.wake_latency = ATOMIC_INIT(0)
-};
-
-int sched_get_idle_load(int cpu)
-{
-	struct sched_pm *stat = &per_cpu(sched_stat, cpu);
-	int latency = atomic_read(&(stat->wake_latency));
-	/*
-	 * Transform the current wakeup latency (us) into an idle load that
-	 * will be compared to task load to decide if it's worth to wake up
-	 * the cpu. The current formula is quite simple but give good
-	 * approximation in the range [0:10ms]
-	 */
-	return (latency * 21) >> 10;
-}
-
 #define WMULT_CONST	(~0U)
 #define WMULT_SHIFT	32
 
@@ -2322,8 +2304,6 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 /* Used instead of source_load when we know the type == 0 */
 static unsigned long weighted_cpuload(const int cpu)
 {
-	if (idle_cpu(cpu))
-		return sched_get_idle_load(cpu);
 	return cpu_rq(cpu)->load.weight;
 }
 
@@ -2756,8 +2736,6 @@ static int select_idle_sibling(struct task_struct *p, int target)
 
 			for_each_cpu(i, sched_group_cpus(sg)) {
 				if (i == target || !idle_cpu(i))
-					goto next;
-				if (weighted_cpuload(i) > p->se.load.weight)
 					goto next;
 			}
 
