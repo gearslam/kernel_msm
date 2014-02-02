@@ -1012,5 +1012,7 @@ config PWRKEY_SUSPEND
         tristate "Suspend touch wake if power button pressed"
         default y
 
+config TOUCHSCREEN_BOOST
+	tristate "Generic TouchBoost from Franco based on CAF InputBoost"
+	default y
 endif
-
